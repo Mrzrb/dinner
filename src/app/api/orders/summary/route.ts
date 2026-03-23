@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
   const summary: Record<string, {
     mealType: string;
     orders: typeof orders;
-    recipeSummary: { recipeId: string; recipeName: string; category: string; totalQuantity: number; orderedBy: string[] }[];
+    recipeSummary: { recipeId: string; recipeName: string; category: string; imageUrl: string | null; totalQuantity: number; orderedBy: string[] }[];
   }> = {};
 
   for (const order of orders) {
@@ -65,6 +65,7 @@ export async function GET(request: NextRequest) {
           recipeId: item.recipeId,
           recipeName: item.recipe.name,
           category: item.recipe.category,
+          imageUrl: item.recipe.imageUrl,
           totalQuantity: item.quantity,
           orderedBy: [order.user.name],
         });

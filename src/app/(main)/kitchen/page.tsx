@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { MEAL_LABELS, CATEGORY_LABELS } from "@/lib/utils";
 
@@ -8,6 +9,7 @@ interface RecipeSummary {
   recipeId: string;
   recipeName: string;
   category: string;
+  imageUrl: string | null;
   totalQuantity: number;
   orderedBy: string[];
 }
@@ -85,22 +87,31 @@ export default function KitchenPage() {
       ) : (
         <div className="space-y-3">
           {activeSummary.recipeSummary.map((item) => (
-            <Link key={item.recipeId} href={`/recipes/${item.recipeId}`} className="block bg-white rounded-xl p-4 border border-neutral-200 active:bg-neutral-50">
-              <div className="flex items-center justify-between mb-2">
-                <div>
-                  <p className="font-medium">{item.recipeName}</p>
-                  <p className="text-xs text-neutral-400">{CATEGORY_LABELS[item.category]}</p>
+            <Link key={item.recipeId} href={`/recipes/${item.recipeId}`} className="block bg-white rounded-xl border border-neutral-200 active:bg-neutral-50 overflow-hidden">
+              <div className="flex gap-3 p-4">
+                {item.imageUrl && (
+                  <div className="relative w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
+                    <Image src={item.imageUrl} alt={item.recipeName} fill className="object-cover" />
+                  </div>
+                )}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0">
+                      <p className="font-medium truncate">{item.recipeName}</p>
+                      <p className="text-xs text-neutral-400">{CATEGORY_LABELS[item.category]}</p>
+                    </div>
+                    <span className="bg-neutral-900 text-white px-3 py-1 rounded-full text-sm font-medium flex-shrink-0">
+                      x{item.totalQuantity}
+                    </span>
+                  </div>
+                  <div className="flex flex-wrap gap-1 mt-2">
+                    {item.orderedBy.map((name) => (
+                      <span key={name} className="text-xs bg-neutral-100 text-neutral-600 px-2 py-0.5 rounded">
+                        {name}
+                      </span>
+                    ))}
+                  </div>
                 </div>
-                <span className="bg-neutral-900 text-white px-3 py-1 rounded-full text-sm font-medium">
-                  x{item.totalQuantity}
-                </span>
-              </div>
-              <div className="flex flex-wrap gap-1">
-                {item.orderedBy.map((name) => (
-                  <span key={name} className="text-xs bg-neutral-100 text-neutral-600 px-2 py-0.5 rounded">
-                    {name}
-                  </span>
-                ))}
               </div>
             </Link>
           ))}
