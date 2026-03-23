@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { MEAL_LABELS, CATEGORY_LABELS } from "@/lib/utils";
 
 interface RecipeSummary {
@@ -84,7 +85,7 @@ export default function KitchenPage() {
       ) : (
         <div className="space-y-3">
           {activeSummary.recipeSummary.map((item) => (
-            <div key={item.recipeId} className="bg-white rounded-xl p-4 border border-neutral-200">
+            <Link key={item.recipeId} href={`/recipes/${item.recipeId}`} className="block bg-white rounded-xl p-4 border border-neutral-200 active:bg-neutral-50">
               <div className="flex items-center justify-between mb-2">
                 <div>
                   <p className="font-medium">{item.recipeName}</p>
@@ -101,7 +102,7 @@ export default function KitchenPage() {
                   </span>
                 ))}
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       )}
