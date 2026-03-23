@@ -23,6 +23,7 @@ COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/prisma.config.ts ./prisma.config.ts
 COPY --from=builder /app/src/generated ./src/generated
+COPY --from=builder /app/docker-entrypoint.sh ./docker-entrypoint.sh
 # Install prisma CLI for migrate deploy at startup
 RUN npm install prisma@7.5.0 --no-save 2>/dev/null
 RUN mkdir -p public/uploads && chown -R nextjs:nodejs public/uploads
@@ -30,4 +31,4 @@ USER nextjs
 EXPOSE 3000
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
-CMD ["sh", "-c", "npx prisma migrate deploy && node server.js"]
+CMD ["sh", "./docker-entrypoint.sh"]
