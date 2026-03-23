@@ -1,0 +1,94 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  ADMIN
+  COOK
+  MEMBER
+}
+
+enum Category {
+  MEAT
+  VEGETABLE
+  SOUP
+  STAPLE
+  SNACK
+  OTHER
+}
+
+enum MealType {
+  BREAKFAST
+  LUNCH
+  DINNER
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  phone        String?  @unique
+  passwordHash String?
+  wxOpenId     String?  @unique
+  wxUnionId    String?
+  avatarUrl    String?
+  role         Role     @default(MEMBER)
+  familyId     String?
+  family       Family?  @relation(fields: [familyId], references: [id])
+  orders       Order[]
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Family {
+  id         String   @id @default(cuid())
+  name       String
+  inviteCode String   @unique
+  members    User[]
+  recipes    Recipe[]
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Recipe {
+  id          String      @id @default(cuid())
+  name        String
+  category    Category
+  ingredients Json
+  steps       Json
+  imageUrl    String?
+  familyId    String
+  family      Family      @relation(fields: [familyId], references: [id])
+  createdBy   String
+  orderItems  OrderItem[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+model Order {
+  id        String      @id @default(cuid())
+  date      DateTime
+  mealType  MealType
+  userId    String
+  user      User        @relation(fields: [userId], references: [id])
+  familyId  String
+  items     OrderItem[]
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  @@unique([userId, date, mealType])
+}
+
+model OrderItem {
+  id       String @id @default(cuid())
+  orderId  String
+  order    Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  recipeId String
+  recipe   Recipe @relation(fields: [recipeId], references: [id])
+  quantity Int    @default(1)
+  note     String?
+}
